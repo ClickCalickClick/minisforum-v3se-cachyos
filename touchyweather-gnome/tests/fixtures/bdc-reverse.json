@@ -1,0 +1,99 @@
+{
+  "latitude": 37.7749,
+  "lookupSource": "coordinates",
+  "longitude": -122.4194,
+  "localityLanguageRequested": "en",
+  "continent": "North America",
+  "continentCode": "NA",
+  "countryName": "United States of America (the)",
+  "countryCode": "US",
+  "principalSubdivision": "California",
+  "principalSubdivisionCode": "US-CA",
+  "city": "San Francisco",
+  "locality": "Mission-Bernal",
+  "postcode": "94102",
+  "plusCode": "849VQHFJ+X6",
+  "fips": {
+    "state": "06",
+    "county": "075",
+    "countySubdivision": "93625",
+    "place": "67000"
+  },
+  "localityInfo": {
+    "administrative": [
+      {
+        "name": "United States of America (the)",
+        "description": "country in North America",
+        "isoName": "United States of America (the)",
+        "order": 2,
+        "adminLevel": 2,
+        "isoCode": "US",
+        "wikidataId": "Q30",
+        "geonameId": 6252001
+      },
+      {
+        "name": "California",
+        "description": "state of the United States of America",
+        "isoName": "California",
+        "order": 5,
+        "adminLevel": 4,
+        "isoCode": "US-CA",
+        "wikidataId": "Q99",
+        "geonameId": 5332921
+      },
+      {
+        "name": "San Francisco",
+        "description": "consolidated city and county in California, United States",
+        "order": 6,
+        "adminLevel": 6,
+        "wikidataId": "Q62",
+        "geonameId": 5391959
+      }
+    ],
+    "informative": [
+      {
+        "name": "North America",
+        "description": "continent in the Americas",
+        "isoName": "North America",
+        "order": 1,
+        "isoCode": "NA",
+        "wikidataId": "Q49",
+        "geonameId": 6255149
+      },
+      {
+        "name": "contiguous United States",
+        "description": "the 48 states of the United States (all but Alaska and Hawaii) and the District of Columbia",
+        "order": 3,
+        "wikidataId": "Q578170"
+      },
+      {
+        "name": "America/Los_Angeles",
+        "description": "time zone",
+        "order": 4
+      },
+      {
+        "name": "06-67000",
+        "description": "FIPS code",
+        "order": 7
+      },
+      {
+        "name": "Western Addition-Buena Vista-Eureka Valley",
+        "order": 8
+      },
+      {
+        "name": "06-075-93625",
+        "description": "FIPS code",
+        "order": 9
+      },
+      {
+        "name": "Mission-Bernal",
+        "order": 10
+      },
+      {
+        "name": "94102",
+        "description": "postal code",
+        "order": 11
+      }
+    ]
+  }
+}

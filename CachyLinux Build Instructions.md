@@ -285,7 +285,62 @@ Use: hold **Right Alt** (the one right of the space bar), speak, release → tex
 
 ---
 
-## 7. Rebuild-from-scratch checklist
+## 7. TouchyWeather — weather in the GNOME top bar (Shell extension)
+
+**What:** my TouchyWeather app (the Mac menu-bar weather app / Pebble companion) ported to a **GNOME Shell extension** — condition glyph + temperature at the right of the top bar; click for the card stack (NWS alerts, current, hourly, precipitation, 7-day, UV, air quality + pollen, sun & moon, golden hour, animated radar), saved locations with city search, rain/UV/alert notifications, and a Preferences window. Source lives in `touchyweather-gnome/` (vendored from the private `TouchyWeather-Mac` repo's `gnome/` folder — that repo is the source of truth; copy it over when it changes).
+
+Nothing to compile in the usual sense: it is GJS (GNOME's JavaScript), loaded by `gnome-shell` itself. The only build step is compiling the GSettings schema, which `install.sh` does.
+
+### 7a. Prerequisites (all in a stock CachyOS GNOME install)
+`gnome-shell` 48–50, `gjs`, `libsoup3`, `geoclue`, `gdk-pixbuf2`, `glib2` (for `glib-compile-schemas`). Nothing extra to `pacman -S`.
+
+### 7b. Install
+```bash
+cd touchyweather-gnome
+gjs -m tests/run.js          # optional: 369 formula/policy checks against the Pebble-derived fixtures
+./install.sh                 # copies to ~/.local/share/gnome-shell/extensions/, compiles the schema,
+                             # installs ~/.local/share/applications/touchyweather.desktop, enables it
+```
+Then **log out and back in once** — on Wayland the Shell only discovers *new* extensions at login. After that the weather item is in the top bar.
+
+**Do not use `./install.sh --link` from this SD card** (or any `/run/media` path): removable media mounts *after* login, the symlink is dangling when the Shell scans, and the extension silently never loads. The script refuses it; a plain copy is the right install.
+
+### 7c. Starting at boot — how it works
+There is no service or autostart file: a GNOME Shell extension runs **inside `gnome-shell`** and starts with it at every login, as long as its UUID is in the `enabled-extensions` GSettings key. `install.sh` adds it there:
+```bash
+gsettings get org.gnome.shell enabled-extensions
+# ['appindicatorsupport@rgcjonas.gmail.com', 'touchyweather@clickcalickclick.github.io']
+```
+At login it renders the last cached snapshot immediately (`~/.local/share/touchyweather/snapshots/`), takes a location fix, refreshes, and then re-checks every 15 min, on resume from suspend, and when the network comes back. The extension stays off on the lock screen (session mode `user` only). The popover's power button = `gnome-extensions disable …` — re-enable with `gnome-extensions enable touchyweather@clickcalickclick.github.io`.
+
+### 7d. Location
+Location Services are **off** on this machine (Settings → Privacy & Security → Location), so the current-location entry comes from the keyless **IP fallback** (BigDataCloud — city-level, "Davenport"). Turn Location Services on and it uses **GeoClue** instead; the Shell shows a one-time permission dialog for "TouchyWeather" (that is what the `.desktop` file is for). The IP fallback can be switched off in Preferences → General.
+
+### 7e. Preferences
+Gear in the popover footer, or `gnome-extensions prefs touchyweather@clickcalickclick.github.io`: units, top-bar style, humidity/dew point, 12/24 h, the three notification triggers (all off by default), analytics opt-out, IP-location fallback, optional proxy key (pollen outside Europe + analytics; also read from `~/.config/touchyweather/secrets.json` or `TW_PROXY_KEY`).
+
+### 7f. Updating after a code change
+GNOME imports an extension's modules **once per session**: re-run `./install.sh`, then log out/in. To test without touching the session, run a headless Shell with the screenshot hook (see `touchyweather-gnome/README.md`):
+```bash
+TW_DEV_SCREENSHOT_DIR=/tmp/tw-shots dbus-run-session -- gnome-shell --headless --wayland --virtual-monitor 1400x1000
+```
+
+### 7g. Verify
+```bash
+gnome-extensions info touchyweather@clickcalickclick.github.io      # State: ACTIVE
+journalctl --user -b -o cat | grep -iE "touchyweather|JS ERROR"       # should be quiet
+```
+`check-fixes.sh` §7 covers these.
+
+### Gotcha: Carto basemap
+The Mac app's radar basemap (Carto Voyager) now serves an "API KEY REQUIRED" watermark on keyless tiles; this port uses Esri's keyless Gray Canvas tiles instead (see `touchyweather-gnome/README.md`, "Deliberate divergences").
+
+### Revert
+`touchyweather-gnome/install.sh --uninstall` (leaves `~/.local/share/touchyweather` and `~/.cache/touchyweather`; delete those too for a full wipe).
+
+---
+
+## 8. Rebuild-from-scratch checklist
 
 1. Install CachyOS (GNOME), keep Secure Boot **off**. `sudo pacman -Syu`.
 2. Enroll fingerprint (section 1).
@@ -307,24 +362,26 @@ Use: hold **Right Alt** (the one right of the space bar), speak, release → tex
    **Caveat:** the `.aml` was built from BIOS 1.03's DSDT. If the BIOS is ever updated, rebuild it from the new table (section 3b) — an override built from a different BIOS's DSDT can break boot (worst case: remove `acpi_override` from HOOKS from a live USB or Limine snapshot and rebuild).
 4. Reboot, then run `bash check-fixes.sh` — it verifies every item below in one go (and is the thing to run after any future update, snapper rollback, or whenever something feels off).
 5. Vocalinux: sections 6a–6f, then log out/in. Copy `rebuild-kit/home/` files into `~` (fix the username in the two `.desktop` files (they say `USER`)).
-6. GNOME Sound → Input volume → 30 %.
+6. TouchyWeather top-bar weather: `cd touchyweather-gnome && ./install.sh`, then log out/in (section 7). Starts with every login from then on.
+7. GNOME Sound → Input volume → 30 %.
 
 ---
 
-## 8. Files in this folder
+## 9. Files in this folder
 
 | File | What |
 |---|---|
 | `check-fixes.sh` | one-shot health check of every fix (`bash check-fixes.sh`; exit 0 = all good) |
 | `rebuild-kit/` | exact copies of every custom file, in system layout |
+| `touchyweather-gnome/` | the TouchyWeather GNOME Shell extension (section 7): `install.sh`, the extension, its tests |
 | `0001-ALSA-hda-realtek-Fix-internal-mic-on-Minisforum-V3-SE.patch` | upstream kernel patch for the mic (section 4) |
 | `HOW-TO-SUBMIT-PATCH.txt` | how to send it with `git send-email` |
 | `voice-test.sh` | mic level sweep with playback (`bash voice-test.sh 20 25 30`) |
 | `voice-tests/`, `mic-*.wav` | recordings from the level tuning |
 | `WINDOWS-MIC-INVESTIGATION-INSTRUCTIONS.txt`, `Collect-AudioInfo.ps1`, `windows-audio-report/` | the Windows-side investigation that proved the mic is on the codec (report contains Windows registry exports — delete if not wanted) |
 
-## 9. Versions at the time of writing
-`linux-cachyos 7.2.6-1`, `linux-firmware 20260916-1`, `libfprint 1.94.100`, `libinput 1.31.3`, `iio-sensor-proxy 3.9`, `pipewire 1.6.8`, `wireplumber 0.5.17`, `mkinitcpio 42`, `acpica 20251212`, `gnome-shell-extension-appindicator 65`, Vocalinux 0.17.0.
+## 10. Versions at the time of writing
+`linux-cachyos 7.2.6-1`, `linux-firmware 20260916-1`, `libfprint 1.94.100`, `libinput 1.31.3`, `iio-sensor-proxy 3.9`, `pipewire 1.6.8`, `wireplumber 0.5.17`, `mkinitcpio 42`, `acpica 20251212`, `gnome-shell-extension-appindicator 65`, Vocalinux 0.17.0, `gnome-shell 50.5` / `gjs 1.88.1` / `libsoup3 3.6` / `geoclue 2.7` (TouchyWeather extension).
 
 SHA256 of the custom files (to check a rebuild copied them intact):
 ```

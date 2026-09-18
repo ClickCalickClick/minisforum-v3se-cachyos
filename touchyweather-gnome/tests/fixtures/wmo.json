@@ -1,0 +1,402 @@
+[
+  {
+    "code": 0,
+    "condition": 0
+  },
+  {
+    "code": 1,
+    "condition": 1
+  },
+  {
+    "code": 2,
+    "condition": 1
+  },
+  {
+    "code": 3,
+    "condition": 2
+  },
+  {
+    "code": 4,
+    "condition": 1
+  },
+  {
+    "code": 5,
+    "condition": 1
+  },
+  {
+    "code": 6,
+    "condition": 1
+  },
+  {
+    "code": 7,
+    "condition": 1
+  },
+  {
+    "code": 8,
+    "condition": 1
+  },
+  {
+    "code": 9,
+    "condition": 1
+  },
+  {
+    "code": 10,
+    "condition": 1
+  },
+  {
+    "code": 11,
+    "condition": 1
+  },
+  {
+    "code": 12,
+    "condition": 1
+  },
+  {
+    "code": 13,
+    "condition": 1
+  },
+  {
+    "code": 14,
+    "condition": 1
+  },
+  {
+    "code": 15,
+    "condition": 1
+  },
+  {
+    "code": 16,
+    "condition": 1
+  },
+  {
+    "code": 17,
+    "condition": 1
+  },
+  {
+    "code": 18,
+    "condition": 1
+  },
+  {
+    "code": 19,
+    "condition": 1
+  },
+  {
+    "code": 20,
+    "condition": 1
+  },
+  {
+    "code": 21,
+    "condition": 1
+  },
+  {
+    "code": 22,
+    "condition": 1
+  },
+  {
+    "code": 23,
+    "condition": 1
+  },
+  {
+    "code": 24,
+    "condition": 1
+  },
+  {
+    "code": 25,
+    "condition": 1
+  },
+  {
+    "code": 26,
+    "condition": 1
+  },
+  {
+    "code": 27,
+    "condition": 1
+  },
+  {
+    "code": 28,
+    "condition": 1
+  },
+  {
+    "code": 29,
+    "condition": 1
+  },
+  {
+    "code": 30,
+    "condition": 1
+  },
+  {
+    "code": 31,
+    "condition": 1
+  },
+  {
+    "code": 32,
+    "condition": 1
+  },
+  {
+    "code": 33,
+    "condition": 1
+  },
+  {
+    "code": 34,
+    "condition": 1
+  },
+  {
+    "code": 35,
+    "condition": 1
+  },
+  {
+    "code": 36,
+    "condition": 1
+  },
+  {
+    "code": 37,
+    "condition": 1
+  },
+  {
+    "code": 38,
+    "condition": 1
+  },
+  {
+    "code": 39,
+    "condition": 1
+  },
+  {
+    "code": 40,
+    "condition": 1
+  },
+  {
+    "code": 41,
+    "condition": 1
+  },
+  {
+    "code": 42,
+    "condition": 1
+  },
+  {
+    "code": 43,
+    "condition": 1
+  },
+  {
+    "code": 44,
+    "condition": 1
+  },
+  {
+    "code": 45,
+    "condition": 6
+  },
+  {
+    "code": 46,
+    "condition": 6
+  },
+  {
+    "code": 47,
+    "condition": 6
+  },
+  {
+    "code": 48,
+    "condition": 6
+  },
+  {
+    "code": 49,
+    "condition": 1
+  },
+  {
+    "code": 50,
+    "condition": 1
+  },
+  {
+    "code": 51,
+    "condition": 3
+  },
+  {
+    "code": 52,
+    "condition": 3
+  },
+  {
+    "code": 53,
+    "condition": 3
+  },
+  {
+    "code": 54,
+    "condition": 3
+  },
+  {
+    "code": 55,
+    "condition": 3
+  },
+  {
+    "code": 56,
+    "condition": 3
+  },
+  {
+    "code": 57,
+    "condition": 3
+  },
+  {
+    "code": 58,
+    "condition": 3
+  },
+  {
+    "code": 59,
+    "condition": 3
+  },
+  {
+    "code": 60,
+    "condition": 3
+  },
+  {
+    "code": 61,
+    "condition": 3
+  },
+  {
+    "code": 62,
+    "condition": 3
+  },
+  {
+    "code": 63,
+    "condition": 3
+  },
+  {
+    "code": 64,
+    "condition": 3
+  },
+  {
+    "code": 65,
+    "condition": 3
+  },
+  {
+    "code": 66,
+    "condition": 3
+  },
+  {
+    "code": 67,
+    "condition": 3
+  },
+  {
+    "code": 68,
+    "condition": 1
+  },
+  {
+    "code": 69,
+    "condition": 1
+  },
+  {
+    "code": 70,
+    "condition": 1
+  },
+  {
+    "code": 71,
+    "condition": 4
+  },
+  {
+    "code": 72,
+    "condition": 4
+  },
+  {
+    "code": 73,
+    "condition": 4
+  },
+  {
+    "code": 74,
+    "condition": 4
+  },
+  {
+    "code": 75,
+    "condition": 4
+  },
+  {
+    "code": 76,
+    "condition": 4
+  },
+  {
+    "code": 77,
+    "condition": 4
+  },
+  {
+    "code": 78,
+    "condition": 1
+  },
+  {
+    "code": 79,
+    "condition": 1
+  },
+  {
+    "code": 80,
+    "condition": 3
+  },
+  {
+    "code": 81,
+    "condition": 3
+  },
+  {
+    "code": 82,
+    "condition": 3
+  },
+  {
+    "code": 83,
+    "condition": 1
+  },
+  {
+    "code": 84,
+    "condition": 1
+  },
+  {
+    "code": 85,
+    "condition": 4
+  },
+  {
+    "code": 86,
+    "condition": 4
+  },
+  {
+    "code": 87,
+    "condition": 1
+  },
+  {
+    "code": 88,
+    "condition": 1
+  },
+  {
+    "code": 89,
+    "condition": 1
+  },
+  {
+    "code": 90,
+    "condition": 1
+  },
+  {
+    "code": 91,
+    "condition": 1
+  },
+  {
+    "code": 92,
+    "condition": 1
+  },
+  {
+    "code": 93,
+    "condition": 1
+  },
+  {
+    "code": 94,
+    "condition": 1
+  },
+  {
+    "code": 95,
+    "condition": 5
+  },
+  {
+    "code": 96,
+    "condition": 5
+  },
+  {
+    "code": 97,
+    "condition": 5
+  },
+  {
+    "code": 98,
+    "condition": 5
+  },
+  {
+    "code": 99,
+    "condition": 5
+  }
+]

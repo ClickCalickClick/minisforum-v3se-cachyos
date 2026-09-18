@@ -1,0 +1,86 @@
+[
+  {
+    "date": "2000-01-06T18:14:00Z",
+    "phase": 0,
+    "illum": 0,
+    "name1": "NEW",
+    "name2": "MOON"
+  },
+  {
+    "date": "2024-01-11T11:57:00Z",
+    "phase": 0,
+    "illum": 0,
+    "name1": "NEW",
+    "name2": "MOON"
+  },
+  {
+    "date": "2024-01-25T17:54:00Z",
+    "phase": 4,
+    "illum": 100,
+    "name1": "FULL",
+    "name2": "MOON"
+  },
+  {
+    "date": "2024-03-25T07:00:00Z",
+    "phase": 4,
+    "illum": 100,
+    "name1": "FULL",
+    "name2": "MOON"
+  },
+  {
+    "date": "2024-06-06T12:38:00Z",
+    "phase": 0,
+    "illum": 0,
+    "name1": "NEW",
+    "name2": "MOON"
+  },
+  {
+    "date": "2024-09-18T02:34:00Z",
+    "phase": 4,
+    "illum": 100,
+    "name1": "FULL",
+    "name2": "MOON"
+  },
+  {
+    "date": "2025-01-01T00:00:00Z",
+    "phase": 1,
+    "illum": 2,
+    "name1": "WAXING",
+    "name2": "CRESCENT"
+  },
+  {
+    "date": "2025-07-16T12:00:00Z",
+    "phase": 5,
+    "illum": 65,
+    "name1": "WANING",
+    "name2": "GIBBOUS"
+  },
+  {
+    "date": "2026-07-16T12:00:00Z",
+    "phase": 1,
+    "illum": 4,
+    "name1": "WAXING",
+    "name2": "CRESCENT"
+  },
+  {
+    "date": "2026-12-24T00:00:00Z",
+    "phase": 4,
+    "illum": 100,
+    "name1": "FULL",
+    "name2": "MOON"
+  },
+  {
+    "date": "2027-02-14T18:00:00Z",
+    "phase": 3,
+    "illum": 61,
+    "name1": "WAXING",
+    "name2": "GIBBOUS"
+  },
+  {
+    "date": "2030-11-30T09:00:00Z",
+    "phase": 1,
+    "illum": 27,
+    "name1": "WAXING",
+    "name2": "CRESCENT"
+  }
+]

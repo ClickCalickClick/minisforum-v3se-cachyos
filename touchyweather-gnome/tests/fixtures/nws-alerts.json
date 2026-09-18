@@ -1,0 +1,262 @@
+{
+    "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+            "@version": "1.1",
+            "wx": "https://api.weather.gov/ontology#",
+            "@vocab": "https://api.weather.gov/ontology#"
+        }
+    ],
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.7a8393bfdd81bb754bc20697ee1c003c2507eb9e.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -100.93,
+                            29.56
+                        ],
+                        [
+                            -100.98,
+                            29.49
+                        ],
+                        [
+                            -101.01,
+                            29.48
+                        ],
+                        [
+                            -101.04,
+                            29.68
+                        ],
+                        [
+                            -100.94,
+                            29.72
+                        ],
+                        [
+                            -100.91,
+                            29.65
+                        ],
+                        [
+                            -100.93,
+                            29.56
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.7a8393bfdd81bb754bc20697ee1c003c2507eb9e.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.7a8393bfdd81bb754bc20697ee1c003c2507eb9e.001.1",
+                "areaDesc": "Val Verde, TX",
+                "geocode": {
+                    "SAME": [
+                        "048465"
+                    ],
+                    "UGC": [
+                        "TXC465"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/TXC465"
+                ],
+                "references": [],
+                "sent": "2026-07-18T08:16:00-05:00",
+                "effective": "2026-07-18T08:16:00-05:00",
+                "onset": "2026-07-18T08:16:00-05:00",
+                "expires": "2026-07-18T11:15:00-05:00",
+                "ends": "2026-07-18T11:15:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Immediate",
+                "event": "Flash Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Austin/San Antonio TX",
+                "headline": "Flash Flood Warning issued July 18 at 8:16AM CDT until July 18 at 11:15AM CDT by NWS Austin/San Antonio TX",
+                "description": "FFWEWX\n\nThe National Weather Service in Austin/San Antonio has issued a\n\n* Flash Flood Warning for...\nEast Central Val Verde County in south central Texas...\n\n* Until 1115 AM CDT.\n\n* At 816 AM CDT, gauge reports indicated heavy rain falling across\nthe warned area. Flash flooding is already occurring.\n\nHAZARD...Life threatening flash flooding. Heavy rain producing\nflash flooding.\n\nSOURCE...Gauges reported.\n\nIMPACT...Life threatening flash flooding of creeks and streams,\nurban areas, highways, streets and underpasses. When\nthe river reaches 14.0 feet, (4.3 meters), Major\nflooding. Life threatening flooding for recreationists\nabove Paffords Crossing to Amistad Reservoir. Flow is\nnear 150,000 cfs. Livestock should be moved from areas\nvulnerable to major flooding.\n\n* Some locations that will experience flash flooding include...\nLong Point, Diablo East, Rough Canyon Recreation Area, Devils\nShores, Pafford Crossing, Spur 406 Campground and Devils River\nState Nat Area Big Satan.",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nBe aware of your surroundings and do not drive on flooded roads.\n\nStay away or be swept away. River banks and culverts can become\nunstable and unsafe.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FFWEWX"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS54 KEWX 181316"
+                    ],
+                    "flashFloodDamageThreat": [
+                        "CONSIDERABLE"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KEWX.FF.W.0099.260718T1316Z-260718T1615Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-07-18T11:15:00-05:00"
+                    ],
+                    "WEAHandling": [
+                        "Imminent Threat"
+                    ],
+                    "CMAMtext": [
+                        "NWS: FLASH FLOOD WARNING this area til 11:15 AM CDT. Avoid flooded areas."
+                    ],
+                    "CMAMlongtext": [
+                        "National Weather Service: A FLASH FLOOD WARNING is in effect for this area until 11:15 AM CDT. This is a dangerous and life-threatening situation. Do not attempt to travel unless you are fleeing an area subject to flooding or under an evacuation order."
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FFW"
+                    ],
+                    "NationalWeatherService": [
+                        "FFW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9f2ee57f9bf01d68db3f4a4f68f6f186f2ffceca.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -101.03,
+                            29.68
+                        ],
+                        [
+                            -100.95,
+                            29.71
+                        ],
+                        [
+                            -100.89,
+                            29.66
+                        ],
+                        [
+                            -100.92,
+                            29.56
+                        ],
+                        [
+                            -101,
+                            29.53
+                        ],
+                        [
+                            -100.97,
+                            29.63
+                        ],
+                        [
+                            -101.03,
+                            29.68
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9f2ee57f9bf01d68db3f4a4f68f6f186f2ffceca.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.9f2ee57f9bf01d68db3f4a4f68f6f186f2ffceca.001.1",
+                "areaDesc": "Val Verde, TX",
+                "geocode": {
+                    "SAME": [
+                        "048465"
+                    ],
+                    "UGC": [
+                        "TXC465"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/TXC465"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.048f59b675e481638a7eb09a8468aad154af16d1.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.048f59b675e481638a7eb09a8468aad154af16d1.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-07-18T04:37:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.12d6655cec6b127f0ab70a413caad48c7197200f.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.12d6655cec6b127f0ab70a413caad48c7197200f.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-07-18T05:38:00-05:00"
+                    }
+                ],
+                "sent": "2026-07-18T07:59:00-05:00",
+                "effective": "2026-07-18T07:59:00-05:00",
+                "onset": "2026-07-18T12:26:00-05:00",
+                "expires": "2026-07-19T02:00:00-05:00",
+                "ends": "2026-07-20T03:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Austin/San Antonio TX",
+                "headline": "Flood Warning issued July 18 at 7:59AM CDT until July 20 at 3:00AM CDT by NWS Austin/San Antonio TX",
+                "description": "...Forecast flooding changed from Moderate to Major severity and\nincreased in duration for the following rivers in Texas...\n\nDevils River At Pafford Crossing nr Comstock affecting Val Verde\nCounty.\n\n* WHAT...Major flooding is forecast.\n\n* WHERE...Devils River at Pafford Crossing nr Comstock.\n\n* WHEN...From this afternoon to early Monday morning.\n\n* IMPACTS...At 14.0 feet, (4.3 meters), Major flooding. Life\nthreatening flooding for recreationists above Paffords Crossing to\nAmistad Reservoir. Flow is near 150,000 cfs. Livestock should be\nmoved from areas vulnerable to major flooding.\n\n* ADDITIONAL DETAILS...\n- At 7:15 AM CDT Saturday the stage was 2.4 feet.\n- Bankfull stage is 4.0 feet.\n- Forecast...The river is expected to rise above flood stage\nthis afternoon to a crest of 14.6 feet this evening. It will\nthen fall below flood stage tomorrow afternoon.\n- Flood stage is 5.0 feet.\n- Flood History...This crest compares to a previous crest of\n14.5 feet on 10/11/1981.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Motorists should not attempt to drive around barricades or drive\ncars through flooded areas.\n\nTurn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nEven 6 inches of fast-moving flood water can knock you off your feet\nand a depth of 2 feet will float your car. Never try to walk, swim,\nor drive through such swift water. If you come upon flood waters,\nstop, turn around and go another way.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued late tonight by 200 AM CDT.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLWEWX"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS44 KEWX 181259"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING NOW IN EFFECT FROM THIS AFTERNOON TO EARLY MONDAY MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.EXT.KEWX.FL.W.0049.260718T1726Z-260720T0800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-07-20T03:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLW"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        }
+    ],
+    "title": "Current watches, warnings, and advisories for 29.5914 N, 100.9629 W",
+    "updated": "2026-07-18T13:35:39+00:00"
+}

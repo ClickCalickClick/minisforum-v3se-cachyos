@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=TouchyWeather
+Comment=Menu bar weather for GNOME Shell (extension)
+Exec=gnome-extensions prefs touchyweather@clickcalickclick.github.io
+Icon=weather-few-clouds
+Terminal=false
+NoDisplay=true
+Categories=Utility;
+X-Geoclue-Reason=TouchyWeather shows the weather where you are.

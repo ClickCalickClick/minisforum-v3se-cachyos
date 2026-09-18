@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="touchyweather">
+  <enum id="org.gnome.shell.extensions.touchyweather.units">
+    <value nick="imperial" value="0"/>
+    <value nick="metric" value="1"/>
+  </enum>
+  <enum id="org.gnome.shell.extensions.touchyweather.menu-bar-style">
+    <value nick="icon-and-temp" value="0"/>
+    <value nick="icon-only" value="1"/>
+    <value nick="temp-only" value="2"/>
+  </enum>
+  <enum id="org.gnome.shell.extensions.touchyweather.time-format">
+    <value nick="system" value="0"/>
+    <value nick="12h" value="1"/>
+    <value nick="24h" value="2"/>
+  </enum>
+  <schema id="org.gnome.shell.extensions.touchyweather" path="/org/gnome/shell/extensions/touchyweather/">
+    <!-- Units -->
+    <key name="units" enum="org.gnome.shell.extensions.touchyweather.units">
+      <default>'imperial'</default>
+      <summary>Measurement system (imperial: °F, mph — metric: °C, km/h)</summary>
+    </key>
+    <!-- Main card / top bar -->
+    <key name="show-dew-point" type="b">
+      <default>false</default>
+      <summary>Show dew point in place of humidity on the Current card</summary>
+    </key>
+    <key name="menu-bar-style" enum="org.gnome.shell.extensions.touchyweather.menu-bar-style">
+      <default>'icon-and-temp'</default>
+      <summary>Top bar item style</summary>
+    </key>
+    <key name="time-format" enum="org.gnome.shell.extensions.touchyweather.time-format">
+      <default>'system'</default>
+      <summary>Clock format for rendered times</summary>
+    </key>
+    <!-- Notifications (spec.md US-6): all off by default -->
+    <key name="notify-rain-enabled" type="b"><default>false</default><summary>Rain starting soon</summary></key>
+    <key name="notify-rain-lead-minutes" type="i"><default>30</default><summary>Rain lead time (15/30/60)</summary></key>
+    <key name="notify-uv-enabled" type="b"><default>false</default><summary>High UV index</summary></key>
+    <key name="notify-uv-threshold" type="i"><default>8</default><summary>UV threshold (6/8/11)</summary></key>
+    <key name="notify-alert-enabled" type="b"><default>false</default><summary>Severe weather alerts (US only)</summary></key>
+    <key name="notify-alert-include-moderate" type="b"><default>false</default><summary>Also notify on Moderate alerts</summary></key>
+    <!-- General -->
+    <key name="analytics-enabled" type="b">
+      <default>true</default>
+      <summary>Anonymous once-per-day usage ping (opt-out)</summary>
+    </key>
+    <key name="ip-location-fallback" type="b">
+      <default>true</default>
+      <summary>Approximate the current location from the IP address when Location Services are off or deny access</summary>
+    </key>
+    <key name="proxy-key" type="s">
+      <default>''</default>
+      <summary>TouchyWeather proxy key (pollen outside Europe, analytics). Empty ⇒ those features degrade silently.</summary>
+    </key>
+    <!-- Internal state -->
+    <key name="has-requested-location-auth" type="b"><default>false</default></key>
+    <key name="has-shown-denied-hint" type="b"><default>false</default></key>
+    <key name="analytics-device-id" type="s"><default>''</default></key>
+    <key name="analytics-last-ping-day" type="s"><default>''</default></key>
+  </schema>
+</schemalist>

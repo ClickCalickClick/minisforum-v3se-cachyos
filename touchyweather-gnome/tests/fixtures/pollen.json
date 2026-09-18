@@ -1,0 +1,74 @@
+[
+  {
+    "grass": 0,
+    "birch": 0,
+    "alder": 0,
+    "ragweed": 0,
+    "mugwort": 0,
+    "olive": 0,
+    "upi": 0
+  },
+  {
+    "grass": 5,
+    "birch": 15,
+    "alder": 15,
+    "ragweed": 5,
+    "mugwort": 5,
+    "olive": 15,
+    "upi": 1
+  },
+  {
+    "grass": 6,
+    "birch": 16,
+    "alder": 16,
+    "ragweed": 6,
+    "mugwort": 6,
+    "olive": 16,
+    "upi": 2
+  },
+  {
+    "grass": 200,
+    "birch": 300,
+    "alder": 300,
+    "ragweed": 200,
+    "mugwort": 200,
+    "olive": 300,
+    "upi": 4
+  },
+  {
+    "grass": 201,
+    "birch": 301,
+    "alder": 301,
+    "ragweed": 201,
+    "mugwort": 201,
+    "olive": 301,
+    "upi": 5
+  },
+  {
+    "grass": null,
+    "birch": null,
+    "alder": null,
+    "ragweed": null,
+    "mugwort": null,
+    "olive": null,
+    "upi": -1
+  },
+  {
+    "grass": null,
+    "birch": 60,
+    "alder": null,
+    "ragweed": null,
+    "mugwort": null,
+    "olive": null,
+    "upi": 3
+  },
+  {
+    "grass": 21,
+    "birch": 0,
+    "alder": 0,
+    "ragweed": 0,
+    "mugwort": 0,
+    "olive": 0,
+    "upi": 3
+  }
+]

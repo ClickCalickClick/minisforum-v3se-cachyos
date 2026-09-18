@@ -98,7 +98,32 @@ id -nG 2>/dev/null | tr ' ' '\n' | grep -qx input && pass "user in 'input' group
   || warn "user not in 'input' group" "only needed for the Right-Alt shortcut: sudo usermod -aG input \$USER, then log out/in"
 pgrep -f "python3 -m vocalinux.mai[n]" >/dev/null && pass "Vocalinux running" || warn "Vocalinux not running" "launch it from the app menu (autostarts at login)"
 
-hdr "7. Package sanity"
+hdr "7. TouchyWeather top-bar weather extension  [doc §7]"
+TW_UUID=touchyweather@clickcalickclick.github.io
+TW_DIR="$HOME/.local/share/gnome-shell/extensions/$TW_UUID"
+if [ -L "$TW_DIR" ]; then
+  warn "extension dir is a symlink" "a link onto removable media is dangling at login; run touchyweather-gnome/install.sh (copy)"
+fi
+[ -s "$TW_DIR/extension.js" ] && pass "extension installed: $TW_DIR" \
+  || fail "extension not installed" "cd touchyweather-gnome && ./install.sh, then log out/in"
+[ -s "$TW_DIR/schemas/gschemas.compiled" ] && pass "GSettings schema compiled" \
+  || fail "schemas/gschemas.compiled missing" "glib-compile-schemas $TW_DIR/schemas"
+[ -s "$HOME/.local/share/applications/touchyweather.desktop" ] && pass "touchyweather.desktop present (GeoClue permission dialog)" \
+  || warn "touchyweather.desktop missing" "install -m644 touchyweather-gnome/touchyweather.desktop ~/.local/share/applications/ (only matters with Location Services on)"
+gsettings get org.gnome.shell enabled-extensions 2>/dev/null | grep -q "$TW_UUID" \
+  && pass "in enabled-extensions (starts with every login)" \
+  || fail "not in enabled-extensions" "gnome-extensions enable $TW_UUID (or ./install.sh)"
+tw_state=$(gnome-extensions info "$TW_UUID" 2>/dev/null | awk -F': *' '/^ *State:/{print $2}')
+case "$tw_state" in
+  ACTIVE)  pass "Shell reports the extension ACTIVE" ;;
+  "")      fail "running Shell does not know the extension" "installed after login? log out and back in" ;;
+  *)       fail "extension state: $tw_state" "journalctl --user -b -o cat | grep -iE 'touchyweather|JS ERROR'" ;;
+esac
+journalctl --user -b -o cat 2>/dev/null | grep -i touchyweather | grep -q "JS ERROR" \
+  && fail "JS errors from the extension this session" "journalctl --user -b -o cat | grep -iE 'touchyweather|JS ERROR'" \
+  || pass "no JS errors logged this session"
+
+hdr "8. Package sanity"
 for p in acpica iio-sensor-proxy gnome-shell-extension-appindicator fuse2 wl-clipboard; do
   pacman -Q "$p" >/dev/null 2>&1 && pass "package $p installed" || fail "package $p missing" "sudo pacman -S --needed $p"
 done

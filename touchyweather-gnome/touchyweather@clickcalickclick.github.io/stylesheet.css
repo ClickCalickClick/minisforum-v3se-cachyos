@@ -1,0 +1,107 @@
+/* TouchyWeather — card chrome. The Shell may be light or dark; the root actor
+   carries .tw-dark or .tw-light (from Main.getStyleVariant()) so both work. */
+
+.tw-root { width: 360px; spacing: 0; }
+.tw-scroll { padding: 0; }
+.tw-cards { padding: 12px; spacing: 10px; }
+
+.tw-card { border-radius: 12px; padding: 12px; spacing: 10px; }
+.tw-dark .tw-card { background-color: rgba(255, 255, 255, 0.07); }
+.tw-light .tw-card { background-color: rgba(0, 0, 0, 0.06); }
+
+.tw-card-title { font-size: 9pt; font-weight: bold; }
+.tw-card-title-icon { icon-size: 11px; }
+.tw-card-header { spacing: 6px; }
+
+.tw-secondary { }
+.tw-headline { font-size: 11.5pt; font-weight: bold; }
+.tw-subheadline { font-size: 10pt; }
+.tw-caption { font-size: 9pt; }
+.tw-caption2 { font-size: 8pt; }
+.tw-callout { font-size: 10.5pt; }
+.tw-callout-medium { font-size: 10.5pt; font-weight: bold; }
+.tw-big-temp { font-size: 34pt; font-weight: bold; }
+.tw-big-number { font-size: 22pt; font-weight: bold; }
+.tw-title3 { font-size: 14pt; font-weight: bold; }
+.tw-metric-label { font-size: 8pt; }
+.tw-metric-value { font-size: 10.5pt; font-weight: bold; }
+.tw-tiny { font-size: 7.5pt; }
+.tw-mono { font-family: monospace; }
+
+.tw-current-icon { icon-size: 44px; }
+.tw-hour-icon { icon-size: 18px; }
+.tw-week-icon { icon-size: 14px; }
+.tw-milestone-icon { icon-size: 16px; }
+.tw-sun-icon { icon-size: 18px; }
+.tw-small-icon { icon-size: 12px; }
+.tw-tiny-icon { icon-size: 9px; }
+
+.tw-pill { border-radius: 99px; padding: 4px 10px; spacing: 5px; font-size: 9pt; font-weight: bold; }
+.tw-pill-rain { background-color: rgba(53, 132, 228, 0.18); color: #62a0ea; }
+.tw-pollen-0, .tw-pollen-1 { background-color: rgba(46, 194, 126, 0.18); color: #33d17a; }
+.tw-pollen-2 { background-color: rgba(245, 194, 17, 0.2); color: #f5c211; }
+.tw-pollen-3 { background-color: rgba(255, 120, 0, 0.2); color: #ff7800; }
+.tw-pollen-4 { background-color: rgba(224, 27, 36, 0.2); color: #ed333b; }
+.tw-pollen-5 { background-color: rgba(145, 65, 172, 0.2); color: #c061cb; }
+
+.tw-hour-cell { width: 44px; spacing: 5px; }
+.tw-hour-strip { spacing: 10px; padding: 2px 0; }
+
+.tw-week-row { spacing: 8px; }
+.tw-week-day { width: 44px; }
+.tw-week-pop { width: 44px; spacing: 2px; }
+.tw-week-low { width: 32px; }
+.tw-week-high { width: 32px; }
+
+.tw-alert { border-radius: 12px; padding: 12px; spacing: 8px; border-width: 1px; }
+.tw-alert-red { background-color: rgba(224, 27, 36, 0.16); border-color: rgba(224, 27, 36, 0.55); }
+.tw-alert-orange { background-color: rgba(255, 120, 0, 0.16); border-color: rgba(255, 120, 0, 0.55); }
+.tw-alert-yellow { background-color: rgba(245, 194, 17, 0.16); border-color: rgba(245, 194, 17, 0.55); }
+.tw-alert-gray { background-color: rgba(128, 128, 128, 0.16); border-color: rgba(128, 128, 128, 0.55); }
+.tw-tint-red { color: #ed333b; }
+.tw-tint-orange { color: #ff7800; }
+.tw-tint-yellow { color: #f5c211; }
+.tw-tint-gray { color: #9a9996; }
+.tw-tint-warm { color: #ff7800; }
+.tw-tint-cool { color: #62a0ea; }
+.tw-tint-moon { color: #f8e45c; }
+.tw-tint-precip { color: #62a0ea; }
+
+.tw-footer { padding: 8px 12px; spacing: 6px; }
+.tw-footer-button { padding: 6px; border-radius: 8px; }
+.tw-footer-button:hover, .tw-footer-button:focus { background-color: rgba(128, 128, 128, 0.2); }
+.tw-footer-button:active { background-color: rgba(128, 128, 128, 0.35); }
+.tw-footer-icon { icon-size: 16px; }
+
+.tw-banner { padding: 10px 12px; spacing: 8px; }
+.tw-banner-yellow { background-color: rgba(245, 194, 17, 0.15); }
+.tw-banner-blue { background-color: rgba(53, 132, 228, 0.12); }
+.tw-small-button { padding: 4px 10px; border-radius: 6px; font-size: 9pt; }
+.tw-small-button:hover, .tw-small-button:focus { background-color: rgba(128, 128, 128, 0.2); }
+.tw-small-button-prominent { background-color: #3584e4; color: white; }
+.tw-small-button-prominent:hover, .tw-small-button-prominent:focus { background-color: #1c71d8; }
+
+.tw-placeholder { padding: 40px 12px; spacing: 8px; }
+.tw-placeholder-icon { icon-size: 32px; }
+
+.tw-radar-box { border-radius: 10px; }
+.tw-radar-controls { spacing: 10px; }
+.tw-radar-time { width: 60px; }
+
+.tw-locations-header { padding: 10px 12px; spacing: 8px; }
+.tw-locations-body { padding: 12px; spacing: 12px; }
+.tw-search { border-radius: 8px; padding: 6px 8px; }
+.tw-dark .tw-search { background-color: rgba(255, 255, 255, 0.08); }
+.tw-light .tw-search { background-color: rgba(0, 0, 0, 0.06); }
+.tw-section-caption { font-size: 8pt; font-weight: bold; }
+.tw-location-row { padding: 6px 4px; spacing: 8px; border-radius: 6px; }
+.tw-location-row:hover, .tw-location-row:focus { background-color: rgba(128, 128, 128, 0.18); }
+.tw-result-row { padding: 7px 4px; spacing: 8px; border-radius: 6px; }
+.tw-result-row:hover, .tw-result-row:focus { background-color: rgba(128, 128, 128, 0.18); }
+.tw-row-button { padding: 3px; border-radius: 5px; }
+.tw-row-button:hover { background-color: rgba(128, 128, 128, 0.25); }
+.tw-accent { color: #3584e4; }
+
+.tw-panel-box { spacing: 4px; }
+.tw-panel-icon { icon-size: 16px; }
+.tw-panel-label { }

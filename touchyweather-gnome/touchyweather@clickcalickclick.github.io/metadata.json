@@ -1,0 +1,10 @@
+{
+  "uuid": "touchyweather@clickcalickclick.github.io",
+  "name": "TouchyWeather",
+  "description": "Menu bar weather: condition glyph + temperature in the top bar, a card stack on click — current, hourly, precipitation, 7-day, UV, air quality, sun & moon, golden hour, animated radar, NWS alerts and notifications. GNOME port of TouchyWeather for Mac.",
+  "shell-version": ["48", "49", "50"],
+  "version-name": "1.0.0",
+  "url": "https://github.com/ClickCalickClick/TouchyWeather-Mac",
+  "settings-schema": "org.gnome.shell.extensions.touchyweather",
+  "gettext-domain": "touchyweather"
+}
