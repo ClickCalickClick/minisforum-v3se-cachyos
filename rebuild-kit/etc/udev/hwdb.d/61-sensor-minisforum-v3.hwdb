@@ -1,0 +1,7 @@
+# Minisforum V3 / V3 SE - LSM6DS3TR-C accelerometer mount matrix
+# Source: https://github.com/mudkipme/awesome-minisforum-v3/issues/2#issuecomment-2279282784
+sensor:modalias:acpi:SMO8B30*:dmi:*svnMicroComputer*:pnV3*
+ ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, -1
+
+sensor:modalias:acpi:SMOCF05*:dmi:*svnMicroComputer*:pnV3*
+ ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, -1

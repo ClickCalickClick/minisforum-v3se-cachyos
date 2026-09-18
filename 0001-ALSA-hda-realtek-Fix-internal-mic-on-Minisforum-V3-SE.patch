@@ -1,0 +1,82 @@
+From: Your Name <you@example.com>
+Subject: [PATCH] ALSA: hda/realtek: Fix internal mic on Minisforum V3 (SE)
+
+On the Minisforum V3 SE (ALC245, PCI SSID 1f4c:e001) the internal
+digital microphone array never produces any audio. The DMIC pin 0x12
+is parsed correctly ("Internal Mic=0x12"), but the headset mic jack
+pin 0x19 (BIOS pin config 0x04a19050, jack detect enabled) has no
+presence detect wired on this board: reading GET_PIN_SENSE on 0x19
+always returns "present" (as it does on the unused, unconnected pin
+0x18), while the headphone jack 0x21 reports correctly.
+
+The generic parser therefore sets up auto-mic switching and, believing
+an external mic is always plugged in, permanently routes the ADC to the
+empty jack (mixer 0x23 input 0x19 unmuted, input 0x12 muted). The
+"Mic Jack" kcontrol reports "on" with nothing plugged in.
+
+Mark pin 0x19 as having no presence detect. The parser then stops
+auto-switching and exposes a normal "Capture Source" (Internal Mic /
+Mic) control, which desktop audio stacks drive from their Internal
+Microphone / Microphone ports. This was verified with a runtime pin
+config override (user_pin_configs) and then with a snd-hda-intel patch
+firmware on kernel 7.2.6: the internal mic records at a normal level,
+and the bass DAC routing from the existing quirk is retained by
+chaining to it.
+
+The same SSID is used by the original Minisforum V3 (Ryzen 8840U),
+and its users report the same "headset mic gets no input" symptom
+(https://github.com/mudkipme/awesome-minisforum-v3/issues/14), which
+is the other face of this broken presence detect.
+
+Signed-off-by: Your Name <you@example.com>
+---
+ sound/hda/codecs/realtek/alc269.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+--- a/sound/hda/codecs/realtek/alc269.c
++++ b/sound/hda/codecs/realtek/alc269.c
+@@ -4384,6 +4384,7 @@
+ 	ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN_HEADSET,
+ 	ALC285_LENOVO_DAC_RENAME,
+ 	ALC287_FIXUP_YOGA9_SPEAKER2_TO_DAC1,
++	ALC245_FIXUP_MINISFORUM_V3_MIC_NO_PRESENCE,
+ };
+ 
+ /* A special fixup for Lenovo C940 and Yoga Duet 7;
+@@ -7136,6 +7137,15 @@
+ 		.chained = true,
+ 		.chain_id = ALC287_FIXUP_TXNW2781_I2C,
+ 	},
++	[ALC245_FIXUP_MINISFORUM_V3_MIC_NO_PRESENCE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x19, 0x04a19150 }, /* headset mic jack, no presence detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC245_FIXUP_BASS_HP_DAC
++	},
+ };
+ 
+ static const struct hda_quirk alc269_fixup_tbl[] = {
+@@ -8349,7 +8359,8 @@
+ 	SND_PCI_QUIRK(0x1ee7, 0x2081, "HONOR MRB-XXX M1020", ALC256_FIXUP_HONOR_MRB_XXX_M1020_AUDIO),
+ 	SND_PCI_QUIRK(0x1f4c, 0xb020, "Minisforum AI X1 Pro",
+ 		      ALC245_FIXUP_MINISFORUM_JACK_DETECT),
+-	SND_PCI_QUIRK(0x1f4c, 0xe001, "Minisforum V3 (SE)", ALC245_FIXUP_BASS_HP_DAC),
++	SND_PCI_QUIRK(0x1f4c, 0xe001, "Minisforum V3 (SE)",
++		      ALC245_FIXUP_MINISFORUM_V3_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1f66, 0x0105, "Ayaneo Portable Game Player", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x2014, 0x800a, "Positivo ARN50", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x2039, 0x0001, "Inspur S14-G1", ALC295_FIXUP_CHROME_BOOK),
+@@ -8579,6 +8590,7 @@
+ 	{.id = ALC236_FIXUP_LENOVO_INV_DMIC, .name = "alc236-fixup-lenovo-inv-mic"},
+ 	{.id = ALC2XX_FIXUP_HEADSET_MIC, .name = "alc2xx-fixup-headset-mic"},
+ 	{.id = ALC245_FIXUP_BASS_HP_DAC, .name = "alc245-fixup-bass-hp-dac"},
++	{.id = ALC245_FIXUP_MINISFORUM_V3_MIC_NO_PRESENCE, .name = "alc245-minisforum-v3-mic-no-presence"},
+ 	{.id = ALC256_FIXUP_HONOR_MRB_XXX_M1020_AUDIO, .name = "alc256-honor-mrb-xxx-m1020-audio"},
+ 	{.id = ALC287_FIXUP_LENOVO_LEGION_AW88399, .name = "alc287-lenovo-legion-aw88399"},
+ 	{}
+-- 
+2.51.0
+

@@ -1,0 +1,7 @@
+# private / bulky artefacts of the investigation - not for the repo
+windows-audio-report/
+voice-tests/
+*.wav
+# session scratch
+Claude/
+private/

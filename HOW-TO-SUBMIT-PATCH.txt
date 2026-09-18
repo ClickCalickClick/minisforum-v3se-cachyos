@@ -1,0 +1,86 @@
+=====================================================================
+  SUBMITTING THE MINISFORUM V3 SE MIC PATCH TO THE LINUX KERNEL
+=====================================================================
+
+The patch:  0001-ALSA-hda-realtek-Fix-internal-mic-on-Minisforum-V3-SE.patch
+It is a plain-text email in "git format-patch" form. Kernel patches must
+be sent INLINE as plain text (not as an attachment, not through a web
+mail editor that re-wraps lines). The standard tool is git send-email.
+
+BEFORE SENDING - PLEASE CHECK TWO THINGS IN THE PATCH FILE
+-----------------------------------------------------------
+ 1. The "From:" and "Signed-off-by:" lines say
+        Your Name <you@example.com>
+    That must be your real name and a mailbox you read. Signed-off-by
+    is your legal statement (the Developer Certificate of Origin,
+    https://developercertificate.org) that you have the right to submit
+    this code under the kernel's GPL-2.0 licence. Edit it if needed.
+ 2. Read the commit message once. It is written in your voice; make
+    sure you are happy to stand behind it.
+
+WHO TO SEND IT TO  (from MAINTAINERS, "SOUND - HDA")
+----------------------------------------------------
+ To:  Takashi Iwai <tiwai@suse.com>
+      Jaroslav Kysela <perex@perex.cz>
+ Cc:  linux-sound@vger.kernel.org
+      Samuel Dionne-Riel <samuel@dionne-riel.com>
+        (owns a V3 SE and wrote the existing "Minisforum V3 (SE)" quirk
+         that this patch chains onto - he can test and ack it)
+
+OPTION A - git send-email (recommended)
+---------------------------------------
+ 1. Install git if needed:      sudo pacman -S --needed git
+ 2. One-time identity:
+        git config --global user.name  "Your Name"
+        git config --global user.email "you@example.com"
+ 3. One-time SMTP setup for Gmail. Gmail needs an "App password"
+    (Google Account -> Security -> 2-Step Verification -> App passwords).
+    Create one named "git send-email" and keep it private. Then:
+        git config --global sendemail.smtpServer     smtp.gmail.com
+        git config --global sendemail.smtpServerPort 587
+        git config --global sendemail.smtpEncryption tls
+        git config --global sendemail.smtpUser       you@example.com
+    (Do NOT store the app password in git config; git will prompt for
+     it when sending, or you can use a credential helper.)
+ 4. Send it (one command, from this folder):
+
+        git send-email \
+          --to="Takashi Iwai <tiwai@suse.com>" \
+          --to="Jaroslav Kysela <perex@perex.cz>" \
+          --cc="linux-sound@vger.kernel.org" \
+          --cc="Samuel Dionne-Riel <samuel@dionne-riel.com>" \
+          0001-ALSA-hda-realtek-Fix-internal-mic-on-Minisforum-V3-SE.patch
+
+    It shows a preview and asks "Send this email? [y/N]" - answer y.
+    Add  --dry-run  to the command to see what it would do first.
+
+OPTION B - dry run / if you want to look before you leap
+--------------------------------------------------------
+    git send-email --dry-run --to=... (same as above)
+    prints the full message without sending anything.
+
+WHAT HAPPENS NEXT
+-----------------
+ - The list archive will show your mail within minutes at
+   https://lore.kernel.org/linux-sound/  (search for "Minisforum V3").
+ - Takashi Iwai usually replies within a few days. He may ask for
+   alsa-info.sh output; generate it with:
+        alsa-info.sh --no-upload
+   (it is in the alsa-utils package) and reply with the file's contents
+   or a link.
+ - If he says "Applied", the fix lands in the next kernel release and is
+   backported to stable kernels; the local workaround
+   (/etc/modprobe.d/minisforum-audio.conf + hda-minisforum-v3se.fw)
+   can then be removed. Until then, keep it - it does the same thing.
+
+TESTING NOTE YOU CAN OFFER IF ASKED
+-----------------------------------
+ - Board: Minisforum V3 SE, Ryzen 7 7735U, BIOS 1.03, ALC245 SSID 1f4c:e001
+ - Verified on 7.2.6 (CachyOS) via the same pin config applied with
+   snd-hda-intel patch firmware ([pincfg] 0x19 0x04a19150):
+   internal DMIC records normally; "Capture Source" appears with
+   Internal Mic / Mic; speakers/bass routing unchanged.
+ - Evidence for the broken detect: GET_PIN_SENSE on 0x19 returns
+   0x80000000 (present) with nothing plugged; unused pin 0x18 returns
+   the same; headphone pin 0x21 returns 0 correctly.
+=====================================================================

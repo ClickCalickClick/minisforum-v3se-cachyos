@@ -1,0 +1,215 @@
+=====================================================================
+  MINISFORUM V3 SE  -  WINDOWS MICROPHONE INVESTIGATION
+  Click-by-click instructions
+=====================================================================
+
+WHY YOU ARE DOING THIS
+----------------------
+On Linux the built-in microphones are silent. We have proven it is NOT
+the Realtek codec GPIOs and NOT the AMD ACP "digital mic" path as Linux
+currently drives it. Windows knows how the mic is really wired. This
+procedure collects that information (read-only, nothing is changed on
+Windows) and saves it onto the SD card so Claude can read it back on
+Linux.
+
+Everything you need is in the "Claude" folder on the SD card:
+    - WINDOWS-MIC-INVESTIGATION-INSTRUCTIONS.txt   (this file)
+    - Collect-AudioInfo.ps1                        (the collector script)
+
+Total time: about 10 minutes.
+Leave the SD card in the tablet the whole time.
+
+=====================================================================
+PART 0 - BOOT INTO WINDOWS
+=====================================================================
+ 1. Reboot the tablet.
+ 2. When the Limine boot menu appears, use the arrow keys to select the
+    Windows entry and press Enter.
+    (If there is no Windows entry: power off, power on and tap the F7
+    key repeatedly to get the firmware boot menu, then choose
+    "Windows Boot Manager".)
+ 3. Log in to Windows.
+
+=====================================================================
+PART 1 - FIND THE SD CARD AND THIS FOLDER
+=====================================================================
+ 1. Press  Windows key + E  to open File Explorer.
+ 2. In the left pane click  "This PC".
+ 3. Under "Devices and drives" find the SD card. It is the ~464 GB
+    drive that is NOT "Windows (C:)". Its letter is probably D:, E:
+    or F:. Double-click it.
+ 4. Double-click the folder  "Claude".
+ 5. You should see  Collect-AudioInfo.ps1  and this .txt file.
+ 6. WRITE DOWN THE DRIVE LETTER (example:  E: ) - you need it in Part 4.
+
+=====================================================================
+PART 2 - LOOK AT THE MICROPHONE IN SOUND SETTINGS  (2 minutes)
+=====================================================================
+ 1. Right-click the speaker icon at the bottom-right of the taskbar
+    (next to the clock).
+ 2. Click  "Sound settings".
+ 3. Scroll down to the  "Input"  section.
+ 4. Look at the microphone listed there. WRITE DOWN ITS EXACT NAME,
+    for example one of:
+        "Microphone Array (Realtek(R) Audio)"
+        "Microphone Array (AMD Audio Device)"
+        "Microphone (Realtek(R) Audio)"
+        something else -> copy it exactly
+ 5. Click on that microphone entry to open its properties page.
+ 6. Speak normally, or tap the top edge of the tablet near the camera.
+    The  "Input volume" / "Test your microphone"  bar should move.
+    WRITE DOWN:  "mic works in Windows: YES / NO"
+ 7. Still on that page, note any extra text such as
+    "Driver: Realtek..." or the "Rename" / "Properties" area - if it
+    shows a driver name, write it down too.
+ 8. Optional but useful: if there is a dropdown to pick a different
+    input device, click it and write down every choice listed.
+
+=====================================================================
+PART 3 - LOOK IN DEVICE MANAGER  (3 minutes)
+=====================================================================
+ 1. Right-click the Start button (Windows logo, bottom-left/centre of
+    the taskbar).
+ 2. Click  "Device Manager".
+ 3. In the list, click the small arrow  >  next to
+        "Audio inputs and outputs"
+    to expand it. WRITE DOWN every line you see under it. Typical:
+        Microphone Array (Realtek(R) Audio)
+        Speakers (Realtek(R) Audio)
+        Headphones (Realtek(R) Audio)
+ 4. Expand  "Sound, video and game controllers".  WRITE DOWN every
+    line. Typical entries:
+        Realtek(R) Audio
+        AMD Audio Device
+        AMD Streaming Audio Device
+ 5. Expand  "System devices"  and scroll through it. WRITE DOWN any
+    line containing the words  "Audio", "ACP", "CoProcessor",
+    "Sensor Fusion", "Realtek"  - for example
+        "AMD Audio CoProcessor"
+        "AMD Audio Bus"
+ 6. Now the important detail - the microphone's parent device:
+      a. Under "Audio inputs and outputs", right-click the microphone
+         entry (the one you wrote down in Part 2).
+      b. Click  "Properties".
+      c. Click the  "Details"  tab.
+      d. In the  "Property"  dropdown choose  "Parent".
+         WRITE DOWN the value. It will look like one of:
+            HDAUDIO\FUNC_01&VEN_10EC&DEV_0245&...   -> Realtek codec
+            ACP\...  or  ...AMDI1019...  or  ...ACPDMIC...
+                                                  -> AMD ACP path
+      e. Change the "Property" dropdown to  "Hardware Ids"  and write
+         down the first line.
+      f. Click  "Cancel".
+ 7. Also check the Realtek device itself:
+      a. Under "Sound, video and game controllers", right-click
+         "Realtek(R) Audio"  (or whatever the Realtek entry is called).
+      b. Properties -> "Driver" tab -> write down  "Driver Version"
+         and "Driver Provider".
+      c. Click  "Driver Details"  and write down the names of the first
+         three files listed (for example  RTKVHD64.sys,  HDXRT.sys ...).
+      d. Cancel, Cancel.
+ 8. If there is ANY device with a yellow warning triangle anywhere in
+    Device Manager, write down its name.
+
+=====================================================================
+PART 4 - RUN THE COLLECTOR SCRIPT  (2 minutes, automatic)
+=====================================================================
+ This script only READS. It writes its results into a new folder
+ "windows-audio-report" inside the Claude folder on the SD card.
+
+ 1. Click the Start button.
+ 2. Type   powershell   (do not press Enter yet).
+ 3. In the search results, RIGHT-click  "Windows PowerShell"
+    and click  "Run as administrator".
+ 4. If a blue "User Account Control" box appears, click  "Yes".
+ 5. A blue/black window opens. Type the following line, replacing
+    E:  with the drive letter you wrote down in Part 1, then press
+    Enter:
+
+        cd E:\Claude
+
+    (You should now see  PS E:\Claude>  as the prompt.)
+
+ 6. Type this exactly (copy it from this file if you can), press Enter:
+
+        powershell -ExecutionPolicy Bypass -File .\Collect-AudioInfo.ps1
+
+ 7. Wait. It takes 30-90 seconds and prints [1/7] ... [7/7] progress
+    lines. Some red lines about "access denied" or "not present" are
+    normal. It finishes with a green
+        ==== DONE ====
+    line, the path of the report folder, and one or more cyan lines
+    containing  parent=...   <- that is the key answer; if you can,
+    write the microphone's parent= line into MY-NOTES.txt (Part 5).
+
+ 8. Type   exit   and press Enter to close the window.
+
+ 9. Back in File Explorer (drive letter -> Claude) you should now see a
+    folder  "windows-audio-report"  containing  00-summary.txt,
+    99-transcript.txt (a log of the run, useful if anything failed)
+    and several sub-folders. Open 00-summary.txt and check that section 2
+    mentions your microphone. If the folder is missing, repeat Part 4
+    and make sure you used "Run as administrator".
+
+ IF THE SCRIPT REFUSES TO RUN ("running scripts is disabled"):
+    type this first, press Enter, answer  Y  if asked, then repeat
+    step 6:
+        Set-ExecutionPolicy -Scope Process Bypass
+
+=====================================================================
+PART 5 - WRITE DOWN YOUR NOTES  (1 minute)
+=====================================================================
+ 1. In the Claude folder, right-click an empty area ->
+    New -> Text Document. Name it   MY-NOTES.txt
+ 2. Open it and type the answers you wrote down in Parts 2 and 3:
+        - exact microphone name in Sound settings
+        - mic works in Windows: YES / NO
+        - all lines under "Audio inputs and outputs"
+        - all lines under "Sound, video and game controllers"
+        - any Audio/ACP/CoProcessor lines under "System devices"
+        - the microphone's "Parent" value  (Part 3, step 6d)
+        - the microphone's first Hardware Id (Part 3, step 6e)
+        - Realtek driver version / provider / first driver files
+        - any devices with a yellow triangle
+ 3. Save and close.
+
+=====================================================================
+PART 6 - OPTIONAL BUT VERY HELPFUL: REALTEK AUDIO CONSOLE
+=====================================================================
+ If the Start menu has an app called "Realtek Audio Console" or
+ "Realtek Audio Control":
+ 1. Open it.
+ 2. Click the microphone / "Microphone Array" section on the left.
+ 3. Write down (into MY-NOTES.txt) which options exist, e.g.
+    "Microphone Boost", "Noise Suppression", "Beam Forming",
+    "Acoustic Echo Cancellation", and the boost value.
+    (Beam Forming / AEC options are typical of a codec-attached
+    digital microphone array - that is itself a clue.)
+ 4. Close the app.
+
+=====================================================================
+PART 7 - SAFELY EJECT AND RETURN TO LINUX
+=====================================================================
+ 1. In File Explorer, right-click the SD card drive -> "Eject".
+    (If Windows says it is in use, just close File Explorer and any
+    Notepad windows, wait 5 seconds and try again. If it still
+    refuses, a normal restart is fine - the files are already saved.)
+ 2. Restart the tablet and choose the CachyOS / Linux entry in the
+    boot menu.
+ 3. Back in Linux, tell Claude:  "Windows report is on the card".
+    Claude will read  Claude/windows-audio-report/  and  MY-NOTES.txt.
+
+=====================================================================
+WHAT THE ANSWER WILL TELL US
+=====================================================================
+ - Parent = HDAUDIO\FUNC_01&VEN_10EC&DEV_0245...
+       -> the mics hang off the Realtek ALC245 codec. The Realtek
+          registry export will then contain the codec verb table
+          (pin/coef/GPIO settings) Windows programs at boot; Claude
+          will turn that into a Linux quirk.
+ - Parent = ACP\... / AMDI1019 / "AMD Audio Device"
+       -> the mics are on the AMD Audio CoProcessor. Then the Linux
+          DSDT override we already built is the right path and what is
+          missing is a microphone power/enable line, which the AMD INF
+          and registry export will reveal.
+=====================================================================

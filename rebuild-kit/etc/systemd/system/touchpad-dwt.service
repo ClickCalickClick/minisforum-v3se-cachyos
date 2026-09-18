@@ -1,0 +1,15 @@
+[Unit]
+Description=Disable-while-typing for Minisforum V3 SE keyboard cover touchpad
+After=systemd-udevd.service
+
+[Service]
+Type=simple
+# Grace period after the last key press during which the touchpad is ignored.
+Environment=TIMEOUT_MS=350
+ExecStart=/usr/bin/python3 /usr/local/bin/touchpad-dwt.py
+Restart=always
+RestartSec=2
+Nice=-5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Vocalinux
+Comment=Offline voice dictation (Whisper, Vulkan)
+Exec=/home/USER/.local/opt/vocalinux/Vocalinux.AppImage
+Icon=vocalinux
+Terminal=false
+Categories=Utility;Accessibility;AudioVideo;
+Keywords=dictation;speech;voice;whisper;
+StartupNotify=false

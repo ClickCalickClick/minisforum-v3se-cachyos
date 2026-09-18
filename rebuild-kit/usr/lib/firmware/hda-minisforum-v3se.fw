@@ -1,0 +1,10 @@
+# Minisforum V3 SE (ALC245, SSID 1f4c:e001)
+# The headset-mic jack pin 0x19 has no working presence detect: it always reads
+# "plugged", so the kernel's auto-mic switching locks capture to the empty jack
+# and the internal DMIC array (pin 0x12) is never selected. Marking the pin
+# NO_PRESENCE disables auto-mic and exposes a normal "Capture Source" control.
+[codec]
+0x10ec0245 0x1f4ce001 0
+
+[pincfg]
+0x19 0x04a19150
