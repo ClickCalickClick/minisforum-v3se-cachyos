@@ -305,7 +305,7 @@ Use: hold **Right Alt** (the one right of the space bar), speak, release → tex
    sudo limine-mkinitcpio
    ```
    **Caveat:** the `.aml` was built from BIOS 1.03's DSDT. If the BIOS is ever updated, rebuild it from the new table (section 3b) — an override built from a different BIOS's DSDT can break boot (worst case: remove `acpi_override` from HOOKS from a live USB or Limine snapshot and rebuild).
-4. Reboot. Verify sections 2, 3f, 4 and 5.
+4. Reboot, then run `bash check-fixes.sh` — it verifies every item below in one go (and is the thing to run after any future update, snapper rollback, or whenever something feels off).
 5. Vocalinux: sections 6a–6f, then log out/in. Copy `rebuild-kit/home/` files into `~` (fix the username in the two `.desktop` files (they say `USER`)).
 6. GNOME Sound → Input volume → 30 %.
 
@@ -315,6 +315,7 @@ Use: hold **Right Alt** (the one right of the space bar), speak, release → tex
 
 | File | What |
 |---|---|
+| `check-fixes.sh` | one-shot health check of every fix (`bash check-fixes.sh`; exit 0 = all good) |
 | `rebuild-kit/` | exact copies of every custom file, in system layout |
 | `0001-ALSA-hda-realtek-Fix-internal-mic-on-Minisforum-V3-SE.patch` | upstream kernel patch for the mic (section 4) |
 | `HOW-TO-SUBMIT-PATCH.txt` | how to send it with `git send-email` |
