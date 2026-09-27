@@ -1,4 +1,0 @@
-# Minisforum V3: the lsm6ds3tr-c FIFO interrupt (edge, amd_gpio pin 9) can miss
-# an edge (e.g. across suspend) and then never fire again, freezing
-# iio-sensor-proxy's orientation. Force sysfs polling instead of buffer mode.
-SUBSYSTEM=="iio", ACTION!="remove", DEVPATH=="*/i2c-SMO8B30:*", ATTR{name}=="lsm6ds3tr-c_accel", ENV{IIO_SENSOR_PROXY_TYPE}="iio-poll-accel"

@@ -1,3 +1,0 @@
-# Hide the V3's real tablet-mode switch from libinput; v3-tablet-mode.service
-# provides a virtual one that also turns on when the keyboard cover is detached.
-SUBSYSTEM=="input", KERNEL=="event*", DEVPATH=="*/ID9001:*/gpio-keys*", ENV{LIBINPUT_IGNORE_DEVICE}="1"
