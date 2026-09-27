@@ -37,7 +37,7 @@ Useful identity commands: `hostnamectl`, `cat /sys/devices/virtual/dmi/id/{sys_v
 - **Fingerprint reader** — supported by `libfprint` ≥ 1.94.6 (goodixmoc driver). Just enroll:
   GNOME Settings → System → Users → *Fingerprint Login*, or `fprintd-enroll`.
   CachyOS's `chwd` already adds `pam_fprintd.so` to `/etc/pam.d/sudo`; GDM has `/etc/pam.d/gdm-fingerprint`.
-- **Tablet mode on keyboard detach** — libinput ≥ 1.26.2 ships `50-system-minisforum.quirks` marking the cover keyboard as internal. No action.
+- **Tablet mode on keyboard detach** — libinput ≥ 1.26.2 ships `50-system-minisforum.quirks` marking the cover keyboard as internal. No action. (This works on the SE because it has **no tablet-mode switch**, so GNOME falls back to "no pointer device → touch mode" when the cover's touchpad disappears. The original V3 *has* a switch that only reacts to folding back, and needs section 8.)
 
 ---
 
@@ -340,7 +340,48 @@ The Mac app's radar basemap (Carto Voyager) now serves an "API KEY REQUIRED" wat
 
 ---
 
-## 8. Rebuild-from-scratch checklist
+## 8. Original V3: tablet mode on cover detach, stuck switch, frozen rotation
+
+Tested on the **original V3** (Ryzen 7 8840U, BIOS 1.06, cover USB `05af:326a`) on 2026-09-27 with `linux-cachyos 7.2.7`, `libinput 1.32.0`, `mutter`/`gnome-shell 50.5`, `iio-sensor-proxy 3.9`. Everything lives in `v3-tablet-mode/` (see its README for the details).
+
+**Symptoms:**
+1. Cover detached → no auto-rotate and no on-screen keyboard.
+2. After reattaching the cover the letter keys are dead (Fn/media keys still work).
+3. Even in tablet mode, orientation stays stuck at `normal`, typically after a suspend.
+
+**Causes:**
+1. The V3's tablet-mode switch (ACPI `ID9001`, `_CID PNP0C60`, one hall sensor on GPIO 5, exposed as `gpio-keys`) flips only when the cover is **folded back**, not when it's detached. Mutter's rule is: touchscreen + tablet switch present → touch mode only while the switch is on. Auto-rotate and the automatic on-screen keyboard both need touch mode.
+2. That switch can stick "on" after the cover is reseated. libinput's Minisforum quirk marks the cover keyboard as internal, so libinput disables it in tablet mode.
+3. The firmware declares the accelerometer's FIFO interrupt as edge-triggered (`GpioInt (Edge, ActiveHigh)`, amd_gpio pin 9) although it behaves like a level signal. After one missed edge the line stays high and never fires again (`/proc/interrupts` count stops). iio-sensor-proxy only uses this buffered mode while GNOME has the sensor claimed, i.e. in tablet mode.
+
+**Fix:**
+```bash
+sudo sh v3-tablet-mode/install.sh
+```
+- `70-v3-tablet-mode.rules` hides the real switch from libinput (`LIBINPUT_IGNORE_DEVICE=1`).
+- `v3-tablet-mode.service` (`/usr/local/bin/v3-tablet-mode`, Python stdlib only) creates a uinput tablet-mode switch: ON when the cover is gone **or** the real switch is on. After an attach (and at startup) it ignores the real switch until it toggles again by itself, which fixes symptom 2. 1 s debounce against pogo-pin dropouts.
+- `81-v3-accel-poll.rules` sets `IIO_SENSOR_PROXY_TYPE=iio-poll-accel` for the LSM6DS3TR-C so iio-sensor-proxy polls sysfs instead of waiting for the interrupt. Harmless on the SE.
+
+On a machine without the `ID9001` switch (e.g. the SE) the service logs "nothing to do" and exits.
+
+### 8a. Verify
+```bash
+journalctl -u v3-tablet-mode -b     # "tablet mode ON (initial)", "real switch -> 1", "cover attached; ..."
+gdbus call --session --dest org.gnome.Mutter.DisplayConfig --object-path /org/gnome/Mutter/DisplayConfig \
+  --method org.freedesktop.DBus.Properties.Get org.gnome.Mutter.DisplayConfig PanelOrientationManaged
+                                    # (<true>,) with the cover off = GNOME is in touch mode
+```
+Then with the cover off: rotate the tablet, and tap a text field with a **finger** (a pen, mouse or touchpad click doesn't bring up the keyboard). `check-fixes.sh` §8 covers the rest.
+
+### Gotcha
+If the letter keys die anyway, fold the cover closed and open it again.
+
+### Revert
+`sudo sh v3-tablet-mode/uninstall.sh`, then log out/in.
+
+---
+
+## 9. Rebuild-from-scratch checklist
 
 1. Install CachyOS (GNOME), keep Secure Boot **off**. `sudo pacman -Syu`.
 2. Enroll fingerprint (section 1).
@@ -364,23 +405,25 @@ The Mac app's radar basemap (Carto Voyager) now serves an "API KEY REQUIRED" wat
 5. Vocalinux: sections 6a–6f, then log out/in. Copy `rebuild-kit/home/` files into `~` (fix the username in the two `.desktop` files (they say `USER`)).
 6. TouchyWeather top-bar weather: `cd touchyweather-gnome && ./install.sh`, then log out/in (section 7). Starts with every login from then on.
 7. GNOME Sound → Input volume → 30 %.
+8. Original V3 only: `sudo sh v3-tablet-mode/install.sh` (section 8).
 
 ---
 
-## 9. Files in this folder
+## 10. Files in this folder
 
 | File | What |
 |---|---|
 | `check-fixes.sh` | one-shot health check of every fix (`bash check-fixes.sh`; exit 0 = all good) |
 | `rebuild-kit/` | exact copies of every custom file, in system layout |
 | `touchyweather-gnome/` | the TouchyWeather GNOME Shell extension (section 7): `install.sh`, the extension, its tests |
+| `v3-tablet-mode/` | original V3: tablet mode on cover detach + accelerometer polling (section 8): `install.sh`, `uninstall.sh`, the service, two udev rules |
 | `0001-ALSA-hda-realtek-Fix-internal-mic-on-Minisforum-V3-SE.patch` | upstream kernel patch for the mic (section 4) |
 | `HOW-TO-SUBMIT-PATCH.txt` | how to send it with `git send-email` |
 | `voice-test.sh` | mic level sweep with playback (`bash voice-test.sh 20 25 30`) |
 | `voice-tests/`, `mic-*.wav` | recordings from the level tuning |
 | `WINDOWS-MIC-INVESTIGATION-INSTRUCTIONS.txt`, `Collect-AudioInfo.ps1`, `windows-audio-report/` | the Windows-side investigation that proved the mic is on the codec (report contains Windows registry exports — delete if not wanted) |
 
-## 10. Versions at the time of writing
+## 11. Versions at the time of writing
 `linux-cachyos 7.2.6-1`, `linux-firmware 20260916-1`, `libfprint 1.94.100`, `libinput 1.31.3`, `iio-sensor-proxy 3.9`, `pipewire 1.6.8`, `wireplumber 0.5.17`, `mkinitcpio 42`, `acpica 20251212`, `gnome-shell-extension-appindicator 65`, Vocalinux 0.17.0, `gnome-shell 50.5` / `gjs 1.88.1` / `libsoup3 3.6` / `geoclue 2.7` (TouchyWeather extension).
 
 SHA256 of the custom files (to check a rebuild copied them intact):

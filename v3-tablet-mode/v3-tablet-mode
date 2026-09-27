@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+"""Virtual SW_TABLET_MODE for the Minisforum V3.
+
+The V3's own tablet-mode switch (gpio-keys under ACPI ID9001) only flips when
+the keyboard cover is folded back, not when it is detached, so GNOME never
+enters touch mode (and never auto-rotates) with the cover off. This daemon
+exposes a uinput switch that is ON when the cover keyboard (USB 05af:326a) is
+absent OR the real switch is on (and has toggled since the cover was last
+attached; see ATTACH_GRACE). The real switch is hidden from libinput by
+70-v3-tablet-mode.rules so the virtual one is the only source of truth.
+"""
+import array, fcntl, glob, os, select, socket, struct, sys, time
+
+COVER_VID, COVER_PID = "05af", "326a"
+DEBOUNCE = 1.0  # seconds a new state must hold before it's reported
+ATTACH_GRACE = 5.0  # real-switch changes this soon after attaching are ignored
+
+EV_SYN, EV_SW, SYN_REPORT, SW_TABLET_MODE = 0, 5, 0, 1
+UI_SET_EVBIT, UI_SET_SWBIT = 0x40045564, 0x4004556D
+UI_DEV_SETUP, UI_DEV_CREATE, UI_DEV_DESTROY = 0x405C5503, 0x5501, 0x5502
+EVIOCGSW8 = (2 << 30) | (8 << 16) | (ord("E") << 8) | 0x1B
+EVENT = struct.Struct("llHHi")
+NETLINK_KOBJECT_UEVENT = 15
+
+
+def log(msg):
+    print(msg, flush=True)
+
+
+def cover_present():
+    for d in glob.glob("/sys/bus/usb/devices/*/"):
+        try:
+            with open(d + "idVendor") as v, open(d + "idProduct") as p:
+                if v.read().strip() == COVER_VID and p.read().strip() == COVER_PID:
+                    return True
+        except OSError:
+            pass
+    return False
+
+
+def find_real_switch():
+    for ev in glob.glob("/sys/class/input/event*"):
+        if "/ID9001:" in os.path.realpath(ev) and "gpio-keys" in os.path.realpath(ev):
+            return "/dev/input/" + os.path.basename(ev)
+    return None
+
+
+def real_switch_state(fd):
+    buf = array.array("B", [0] * 8)
+    fcntl.ioctl(fd, EVIOCGSW8, buf, True)
+    return bool((buf[0] >> SW_TABLET_MODE) & 1)
+
+
+def make_uinput():
+    fd = os.open("/dev/uinput", os.O_WRONLY | os.O_NONBLOCK)
+    fcntl.ioctl(fd, UI_SET_EVBIT, EV_SW)
+    fcntl.ioctl(fd, UI_SET_SWBIT, SW_TABLET_MODE)
+    setup = struct.pack("HHHH80sI", 0x06, 0x1209, 0x7ab1, 1,  # BUS_VIRTUAL
+                        b"V3 cover tablet-mode switch", 0)
+    fcntl.ioctl(fd, UI_DEV_SETUP, setup)
+    fcntl.ioctl(fd, UI_DEV_CREATE)
+    return fd
+
+
+def emit(fd, on):
+    os.write(fd, EVENT.pack(0, 0, EV_SW, SW_TABLET_MODE, int(on)))
+    os.write(fd, EVENT.pack(0, 0, EV_SYN, SYN_REPORT, 0))
+
+
+def main():
+    path = find_real_switch()
+    if not path:
+        # Not an original V3 (e.g. the V3 SE has no switch, and GNOME already
+        # enters touch mode there when the cover's touchpad disappears).
+        log("no ID9001 tablet-mode switch found; nothing to do")
+        return 0
+    real_fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+    log(f"real switch: {path}")
+
+    nl = socket.socket(socket.AF_NETLINK, socket.SOCK_DGRAM, NETLINK_KOBJECT_UEVENT)
+    nl.bind((0, 1))
+
+    ui = make_uinput()
+    time.sleep(0.5)  # let udev/libinput pick up the new device
+
+    # Reattaching the cover can leave the real switch stuck ON (letter keys go
+    # dead). So after an attach, ignore the real switch until it changes again
+    # outside the ATTACH_GRACE window; a genuine fold-back always toggles it.
+    cover_was_present = cover_present()
+    attached_at = time.monotonic()
+    real_trusted = not cover_was_present  # same distrust at startup
+
+    def desired():
+        real = real_switch_state(real_fd)
+        return (real and real_trusted) or not cover_was_present
+
+    current = desired()
+    emit(ui, current)
+    log(f"tablet mode {'ON' if current else 'OFF'} (initial)")
+    pending_since = None
+
+    try:
+        while True:
+            fds = [nl, real_fd]
+            timeout = None if pending_since is None else max(0, pending_since + DEBOUNCE - time.monotonic())
+            ready, _, _ = select.select(fds, [], [], timeout)
+            if nl in ready:
+                nl.recv(65536)
+            present = cover_present()
+            if present and not cover_was_present:
+                attached_at, real_trusted = time.monotonic(), False
+                log("cover attached; ignoring real switch until it toggles")
+            cover_was_present = present
+            if real_fd in ready:
+                try:
+                    while data := os.read(real_fd, EVENT.size * 64):
+                        for i in range(0, len(data) - EVENT.size + 1, EVENT.size):
+                            _, _, typ, code, val = EVENT.unpack_from(data, i)
+                            if typ != EV_SW or code != SW_TABLET_MODE:
+                                continue
+                            ok = time.monotonic() - attached_at > ATTACH_GRACE
+                            log(f"real switch -> {val}" + ("" if ok else " (ignored, just attached)"))
+                            if ok and not real_trusted:
+                                real_trusted = True
+                except BlockingIOError:
+                    pass
+            want = desired()
+            if want == current:
+                pending_since = None
+            elif pending_since is None:
+                pending_since = time.monotonic()
+            elif time.monotonic() - pending_since >= DEBOUNCE:
+                current, pending_since = want, None
+                emit(ui, current)
+                log(f"tablet mode {'ON' if current else 'OFF'} "
+                    f"(cover {'attached' if cover_present() else 'detached'})")
+    finally:
+        fcntl.ioctl(ui, UI_DEV_DESTROY)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

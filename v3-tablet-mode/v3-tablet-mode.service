@@ -1,0 +1,11 @@
+[Unit]
+Description=Minisforum V3: tablet mode when keyboard cover is detached
+After=systemd-udevd.service
+
+[Service]
+ExecStart=/usr/local/bin/v3-tablet-mode
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

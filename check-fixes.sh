@@ -1,5 +1,5 @@
 #!/bin/bash
-# check-fixes.sh - verify every Minisforum V3 SE / CachyOS fix is still in place.
+# check-fixes.sh - verify every Minisforum V3 SE / V3 CachyOS fix is still in place.
 # Run after a system update, a snapper rollback, or whenever something feels off:
 #     bash check-fixes.sh
 # Exit code 0 = all good, 1 = something needs attention. No root needed.
@@ -123,7 +123,39 @@ journalctl --user -b -o cat 2>/dev/null | grep -i touchyweather | grep -q "JS ER
   && fail "JS errors from the extension this session" "journalctl --user -b -o cat | grep -iE 'touchyweather|JS ERROR'" \
   || pass "no JS errors logged this session"
 
-hdr "8. Package sanity"
+hdr "8. Tablet mode + accelerometer polling  [doc §8]"
+accel=$(grep -l lsm6ds3tr-c_accel /sys/bus/iio/devices/iio:device*/name 2>/dev/null | head -1 | xargs -r dirname)
+if [ -n "$accel" ]; then
+  udevadm info -q property "$accel" 2>/dev/null | grep -qx 'IIO_SENSOR_PROXY_TYPE=iio-poll-accel' \
+    && pass "iio-sensor-proxy polls the accelerometer (no FIFO interrupt)" \
+    || warn "accelerometer uses the FIFO interrupt - rotation can freeze after a suspend" "sudo sh v3-tablet-mode/install.sh (installs 81-v3-accel-poll.rules)"
+fi
+realsw=$(for ev in /sys/class/input/event*; do case "$(readlink -f "$ev")" in */ID9001:*/gpio-keys*) echo "/dev/input/${ev##*/}";; esac; done | head -1)
+if [ -z "$realsw" ]; then
+  pass "no ID9001 tablet switch (not an original V3) - nothing else to check"
+else
+  systemctl is-active -q v3-tablet-mode.service \
+    && pass "v3-tablet-mode.service running" \
+    || fail "v3-tablet-mode.service not running - no tablet mode with the cover detached" "sudo sh v3-tablet-mode/install.sh; journalctl -u v3-tablet-mode -b"
+  udevadm info -q property "$realsw" 2>/dev/null | grep -qx 'LIBINPUT_IGNORE_DEVICE=1' \
+    && pass "real tablet switch hidden from libinput ($realsw)" \
+    || fail "real tablet switch still visible to libinput" "sudo sh v3-tablet-mode/install.sh, then log out/in"
+  grep -qs '^N: Name="V3 cover tablet-mode switch"' /proc/bus/input/devices \
+    && pass "virtual tablet-mode switch present" \
+    || fail "virtual tablet-mode switch missing" "journalctl -u v3-tablet-mode -b"
+  lsusb 2>/dev/null | grep -q 05af:326a && cover=attached || cover=detached
+  managed=$(gdbus call --session --dest org.gnome.Mutter.DisplayConfig --object-path /org/gnome/Mutter/DisplayConfig \
+    --method org.freedesktop.DBus.Properties.Get org.gnome.Mutter.DisplayConfig PanelOrientationManaged 2>/dev/null)
+  case "$cover/$managed" in
+    detached/*true*)  pass "cover detached and GNOME is in touch mode (auto-rotate + on-screen keyboard)";;
+    detached/*false*) fail "cover detached but GNOME is not in touch mode" "journalctl -u v3-tablet-mode -b";;
+    attached/*true*)  warn "cover attached but GNOME is in touch mode" "fine if the cover is folded back; if the letter keys are dead, fold it closed and reopen";;
+    attached/*false*) pass "cover attached, laptop mode";;
+    *) warn "could not read GNOME's touch-mode state" "run from inside the GNOME session";;
+  esac
+fi
+
+hdr "9. Package sanity"
 for p in acpica iio-sensor-proxy gnome-shell-extension-appindicator fuse2 wl-clipboard; do
   pacman -Q "$p" >/dev/null 2>&1 && pass "package $p installed" || fail "package $p missing" "sudo pacman -S --needed $p"
 done
