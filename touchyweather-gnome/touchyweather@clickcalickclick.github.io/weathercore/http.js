@@ -32,7 +32,7 @@ export function buildURL(base, params) {
  * 25 s imagery) mirrors the Mac's per-purpose `URLSession`s.
  */
 export class HttpClient {
-    constructor({timeout = 15, userAgent = 'TouchyWeatherGNOME/dev (jwuerz@gmail.com)', session = null} = {}) {
+    constructor({timeout = 15, userAgent = 'TouchyWeatherGNOME/dev (https://github.com/ClickCalickClick)', session = null} = {}) {
         this.session = session ?? new Soup.Session({timeout, user_agent: userAgent});
     }
 

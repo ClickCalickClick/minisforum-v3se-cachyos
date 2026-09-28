@@ -40,7 +40,7 @@ import {DevScreenshots} from './app/devScreenshots.js';
 export default class TouchyWeatherExtension extends Extension {
     enable() {
         const version = this.metadata['version-name'] ?? 'dev';
-        const userAgent = `TouchyWeatherGNOME/${version} (jwuerz@gmail.com)`;
+        const userAgent = `TouchyWeatherGNOME/${version} (https://github.com/ClickCalickClick)`;
         const dataDir = defaultDataDir();
         const cacheDir = defaultCacheDir();
         ensureDir(dataDir);

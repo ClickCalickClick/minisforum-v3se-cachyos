@@ -37,7 +37,7 @@ Useful identity commands: `hostnamectl`, `cat /sys/devices/virtual/dmi/id/{sys_v
 - **Fingerprint reader** — supported by `libfprint` ≥ 1.94.6 (goodixmoc driver). Just enroll:
   GNOME Settings → System → Users → *Fingerprint Login*, or `fprintd-enroll`.
   CachyOS's `chwd` already adds `pam_fprintd.so` to `/etc/pam.d/sudo`; GDM has `/etc/pam.d/gdm-fingerprint`.
-- **Tablet mode on keyboard detach** — libinput ≥ 1.26.2 ships `50-system-minisforum.quirks` marking the cover keyboard as internal. No action. (This works on the SE because it has **no tablet-mode switch**, so GNOME falls back to "no pointer device → touch mode" when the cover's touchpad disappears. The original V3 *has* a switch that only reacts to folding back; see section 8.)
+- **Tablet mode on keyboard detach** — libinput ≥ 1.26.2 ships `50-system-minisforum.quirks` marking the cover keyboard as internal. No action. (This works on the SE because it has **no tablet-mode switch**, so GNOME falls back to "no pointer device → touch mode" when the cover's touchpad disappears. The original V3 *has* a switch that only reacts to folding back; see section 9.)
 
 ---
 
@@ -314,7 +314,7 @@ gsettings get org.gnome.shell enabled-extensions
 At login it renders the last cached snapshot immediately (`~/.local/share/touchyweather/snapshots/`), takes a location fix, refreshes, and then re-checks every 15 min, on resume from suspend, and when the network comes back. The extension stays off on the lock screen (session mode `user` only). The popover's power button = `gnome-extensions disable …` — re-enable with `gnome-extensions enable touchyweather@clickcalickclick.github.io`.
 
 ### 7d. Location
-Location Services are **off** on this machine (Settings → Privacy & Security → Location), so the current-location entry comes from the keyless **IP fallback** (BigDataCloud — city-level, "Davenport"). Turn Location Services on and it uses **GeoClue** instead; the Shell shows a one-time permission dialog for "TouchyWeather" (that is what the `.desktop` file is for). The IP fallback can be switched off in Preferences → General.
+Location Services are **off** on this machine (Settings → Privacy & Security → Location), so the current-location entry comes from the keyless **IP fallback** (BigDataCloud — city-level). Turn Location Services on and it uses **GeoClue** instead; the Shell shows a one-time permission dialog for "TouchyWeather" (that is what the `.desktop` file is for). The IP fallback can be switched off in Preferences → General.
 
 ### 7e. Preferences
 Gear in the popover footer, or `gnome-extensions prefs touchyweather@clickcalickclick.github.io`: units, top-bar style, humidity/dew point, 12/24 h, the three notification triggers (all off by default), analytics opt-out, IP-location fallback, optional proxy key (pollen outside Europe + analytics; also read from `~/.config/touchyweather/secrets.json` or `TW_PROXY_KEY`).
@@ -340,7 +340,40 @@ The Mac app's radar basemap (Carto Voyager) now serves an "API KEY REQUIRED" wat
 
 ---
 
-## 8. Original V3
+## 8. TouchyStats — system monitor in the GNOME top bar (Shell extension)
+
+**What:** my TouchyStats extension, the companion to TouchyWeather: CPU, GPU, memory and battery as small rings in the top bar, and a card stack with live graphs (processor, graphics, memory, battery & power, network, storage, temperatures, top apps). Unlike TouchyWeather it has its own public repo, so it isn't vendored here: https://github.com/ClickCalickClick/TouchyStats-GNOME
+
+### 8a. Install
+```bash
+git clone https://github.com/ClickCalickClick/TouchyStats-GNOME.git
+cd TouchyStats-GNOME
+./install.sh            # copies to ~/.local/share/gnome-shell/extensions/, compiles the schema, enables it
+```
+Then **log out and back in once** (Wayland only discovers new extensions at login). Like TouchyWeather, it starts with every login from then on as long as its UUID is in `enabled-extensions`. The same removable-media caveat as 7b applies to `./install.sh --dev` (symlink): only use it from a checkout on the internal disk.
+
+### 8b. Verify
+```bash
+gnome-extensions info touchystats@clickcalickclick.github.io        # State: ACTIVE
+journalctl --user -b -o cat | grep -iE "touchystats|JS ERROR"         # should be quiet
+```
+
+### Gotcha: Bluetooth device batteries froze the whole desktop
+The first version read keyboard/mouse batteries straight from `/sys/class/power_supply/` on every 2 s update. For a Bluetooth HID device (here a Logitech K760), that read makes the kernel ask the device itself and wait for the answer, and a dozing keyboard took up to ~2 s to reply. The read ran on gnome-shell's main thread, so the entire shell froze for that long, about 30 % of the time, which showed up as lag when switching windows (easy to blame on RAM; it wasn't). Fixed by reading peripheral batteries from UPower over D-Bus instead, which does the waiting in its own process. **Rule for any extension: never read a peripheral's `power_supply` files from the shell.**
+
+### 8c. If the desktop stutters: `tools/lagprobe.py`
+A read-only probe that finds what is blocking the shell. It pings gnome-shell over D-Bus every 25 ms, records what its main thread is doing during each stall (running, or asleep in the kernel and on what), and lines that up with memory/IO/CPU pressure, swap, GPU clock, busy processes and the journal.
+```bash
+python3 tools/lagprobe.py        # use the desktop; press Enter in the terminal when you feel a lag; Ctrl+C for the report
+```
+Runs are saved under `~/.cache/lagprobe/`. The Bluetooth-battery bug above showed up as `SHELL WAITING in kernel on __uhid_report_queue_and_wait` on a 2 s beat.
+
+### Revert
+`gnome-extensions disable touchystats@clickcalickclick.github.io`, then delete `~/.local/share/gnome-shell/extensions/touchystats@clickcalickclick.github.io`.
+
+---
+
+## 9. Original V3
 
 The original V3 (not the SE) needs different fixes: its own DSDT build, a
 tablet-mode service, and an accelerometer polling rule. They live in their own
@@ -348,7 +381,7 @@ repo: https://github.com/ClickCalickClick/minisforum-v3-cachyos
 
 ---
 
-## 9. Rebuild-from-scratch checklist
+## 10. Rebuild-from-scratch checklist
 
 1. Install CachyOS (GNOME), keep Secure Boot **off**. `sudo pacman -Syu`.
 2. Enroll fingerprint (section 1).
@@ -371,24 +404,26 @@ repo: https://github.com/ClickCalickClick/minisforum-v3-cachyos
 4. Reboot, then run `bash check-fixes.sh` — it verifies every item below in one go (and is the thing to run after any future update, snapper rollback, or whenever something feels off).
 5. Vocalinux: sections 6a–6f, then log out/in. Copy `rebuild-kit/home/` files into `~` (fix the username in the two `.desktop` files (they say `USER`)).
 6. TouchyWeather top-bar weather: `cd touchyweather-gnome && ./install.sh`, then log out/in (section 7). Starts with every login from then on.
-7. GNOME Sound → Input volume → 30 %.
+7. TouchyStats top-bar system monitor: clone it and run `./install.sh`, then log out/in (section 8). One logout covers both extensions.
+8. GNOME Sound → Input volume → 30 %.
 
 ---
 
-## 10. Files in this folder
+## 11. Files in this folder
 
 | File | What |
 |---|---|
 | `check-fixes.sh` | one-shot health check of every fix (`bash check-fixes.sh`; exit 0 = all good) |
 | `rebuild-kit/` | exact copies of every custom file, in system layout |
 | `touchyweather-gnome/` | the TouchyWeather GNOME Shell extension (section 7): `install.sh`, the extension, its tests |
+| `tools/lagprobe.py` | finds what makes the desktop stutter (section 8c); read-only |
 | `0001-ALSA-hda-realtek-Fix-internal-mic-on-Minisforum-V3-SE.patch` | upstream kernel patch for the mic (section 4) |
 | `HOW-TO-SUBMIT-PATCH.txt` | how to send it with `git send-email` |
 | `voice-test.sh` | mic level sweep with playback (`bash voice-test.sh 20 25 30`) |
 | `voice-tests/`, `mic-*.wav` | recordings from the level tuning |
 | `WINDOWS-MIC-INVESTIGATION-INSTRUCTIONS.txt`, `Collect-AudioInfo.ps1`, `windows-audio-report/` | the Windows-side investigation that proved the mic is on the codec (report contains Windows registry exports — delete if not wanted) |
 
-## 11. Versions at the time of writing
+## 12. Versions at the time of writing
 `linux-cachyos 7.2.6-1`, `linux-firmware 20260916-1`, `libfprint 1.94.100`, `libinput 1.31.3`, `iio-sensor-proxy 3.9`, `pipewire 1.6.8`, `wireplumber 0.5.17`, `mkinitcpio 42`, `acpica 20251212`, `gnome-shell-extension-appindicator 65`, Vocalinux 0.17.0, `gnome-shell 50.5` / `gjs 1.88.1` / `libsoup3 3.6` / `geoclue 2.7` (TouchyWeather extension).
 
 SHA256 of the custom files (to check a rebuild copied them intact):

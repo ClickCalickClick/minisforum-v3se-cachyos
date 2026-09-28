@@ -32,7 +32,7 @@ export class NWSAlertsClient {
     constructor(http, appVersion = 'dev') {
         this.http = http;
         this.baseURL = 'https://api.weather.gov/alerts/active';
-        this.userAgent = `TouchyWeatherGNOME/${appVersion} (jwuerz@gmail.com)`;
+        this.userAgent = `TouchyWeatherGNOME/${appVersion} (https://github.com/ClickCalickClick)`;
     }
 
     async fetchAlerts(latitude, longitude) {

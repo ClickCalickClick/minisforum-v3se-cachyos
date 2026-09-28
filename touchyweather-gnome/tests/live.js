@@ -70,8 +70,8 @@ await (async () => {
         const rv = await new RainViewerClient(http).frames();
         print(`RainViewer: host ${rv.host}, ${rv.frames.length} frames, newest ${new Date(rv.frames.at(-1).time * 1000).toISOString()}`);
 
-        const geo = await new OpenMeteoGeocodingClient(http).search('Davenport');
-        print(`Geocoding "Davenport": ${geo.slice(0, 3).map(geocodingDisplayLabel).join(' | ')}`);
+        const geo = await new OpenMeteoGeocodingClient(http).search('Springfield');
+        print(`Geocoding "Springfield": ${geo.slice(0, 3).map(geocodingDisplayLabel).join(' | ')}`);
         print('LIVE OK');
     } catch (e) {
         print(`LIVE FAILED: ${e.message}\n${e.stack}`);
