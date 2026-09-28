@@ -28,7 +28,7 @@ journalctl -k -b --no-pager 2>/dev/null | grep -q "ACPI: Table Upgrade: override
 if ls /sys/bus/iio/devices/iio:device*/name >/dev/null 2>&1 && cat /sys/bus/iio/devices/iio:device*/name | grep -q lsm6ds3tr-c_accel; then
   pass "accelerometer device present (lsm6ds3tr-c_accel)"
   dev=$(grep -l lsm6ds3tr-c_accel /sys/bus/iio/devices/iio:device*/name | head -1 | xargs dirname)
-  udevadm info -q property "$dev" 2>/dev/null | grep -q '^ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, -1' \
+  udevadm info -q property "$dev" 2>/dev/null | grep -q '^ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, 1' \
     && pass "mount matrix applied to the sensor" \
     || fail "mount matrix not applied (rotation will be inverted)" "sudo systemd-hwdb update && sudo udevadm trigger"
 else

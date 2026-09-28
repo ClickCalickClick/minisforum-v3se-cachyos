@@ -104,10 +104,10 @@ HOOKS=(base systemd acpi_override autodetect microcode kms modconf block keyboar
 ```
 # Minisforum V3 / V3 SE - LSM6DS3TR-C accelerometer mount matrix
 sensor:modalias:acpi:SMO8B30*:dmi:*svnMicroComputer*:pnV3*
- ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, -1
+ ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, 1
 
 sensor:modalias:acpi:SMOCF05*:dmi:*svnMicroComputer*:pnV3*
- ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, -1
+ ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, -1, 0; 0, 0, 1
 ```
 ```bash
 sudo systemd-hwdb update
